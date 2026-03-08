@@ -27,7 +27,8 @@ import { cn } from '@/lib/utils'
 const textareaClasses =
   'min-h-[44px] w-full rounded-lg border border-slate-200 bg-white text-base outline-none placeholder:text-slate-400 focus:border-slate-300 focus:ring-2 focus:ring-slate-200 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm box-border'
 
-const CATEGORIES = ['financial', 'medical', 'ideas', 'remember', 'message_only'] as const
+const CATEGORIES = ['financial', 'medical', 'ideas', 'remember', 'message_only', 'trash'] as const
+const RECLASSIFY_CATEGORIES = ['financial', 'medical', 'ideas', 'remember', 'trash'] as const
 
 function CategorySelectPopover({
   category,
@@ -68,7 +69,7 @@ function CategorySelectPopover({
             <SelectValue placeholder="Categoria" />
           </SelectTrigger>
           <SelectContent>
-            {CATEGORIES.map((c) => (
+            {RECLASSIFY_CATEGORIES.map((c) => (
               <SelectItem key={c} value={c}>
                 {c}
               </SelectItem>
@@ -245,7 +246,13 @@ export function HomePage() {
         ) : (
           <ul className="space-y-3">
             {processedMessages.map((m: Message) => (
-              <li key={m.id} className="p-3 bg-white rounded-lg border border-slate-100 shadow-sm">
+              <li
+                key={m.id}
+                className={cn(
+                  'p-3 bg-white rounded-lg border border-slate-100 shadow-sm',
+                  (reclassifyPending[m.id] ?? m.category) === 'trash' && 'opacity-50'
+                )}
+              >
                 <p className="text-slate-800">{m.content}</p>
                 <div className="mt-2 flex items-center gap-2 flex-wrap">
                   <CategorySelectPopover
@@ -262,6 +269,17 @@ export function HomePage() {
                     isPending={!!reclassifyPending[m.id]}
                     error={reclassifyErrors[m.id]}
                   />
+                  {m.created_at && (
+                    <span className="text-xs text-slate-400">
+                      {new Date(m.created_at).toLocaleString('en-US', {
+                        month: 'numeric',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  )}
                 </div>
               </li>
             ))}

@@ -22,8 +22,9 @@ export async function createMessage(content: string, useAI = true) {
     body: JSON.stringify({ content, use_ai: useAI }),
   })
 }
-export async function fetchMessages() {
-  return fetchApi<Message[]>('/api/messages')
+export async function fetchMessages(category?: string) {
+  const url = category ? `/api/messages?category=${encodeURIComponent(category)}` : '/api/messages'
+  return fetchApi<Message[]>(url)
 }
 export async function reclassifyMessage(id: number, category: string) {
   return fetchApi(`/api/messages/${id}/reclassify`, {

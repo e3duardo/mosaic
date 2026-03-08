@@ -20,6 +20,7 @@ func main() {
 	if processorURL == "" {
 		processorURL = "http://localhost:8000"
 	}
+	examplesFile := os.Getenv("EXAMPLES_FILE")
 
 	db, err := database.Open(dbURL)
 	if err != nil {
@@ -42,7 +43,7 @@ func main() {
 	hub := api.NewHub()
 	go hub.Run()
 
-	h := api.NewHandler(db, processorURL, hub)
+	h := api.NewHandler(db, processorURL, hub, examplesFile)
 
 	r := gin.Default()
 	r.Use(cors.Default())

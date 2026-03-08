@@ -5,6 +5,7 @@ export type Message = {
   content: string
   category: string
   status?: 'pending' | 'processed'
+  created_at?: string
 }
 
 type WsPayload = {

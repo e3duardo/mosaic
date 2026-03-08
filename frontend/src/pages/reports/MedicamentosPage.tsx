@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { fetchMedicines, fetchAppointments } from '@/api/client'
+import { fetchMedicines, fetchAppointments, fetchMessages } from '@/api/client'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
@@ -14,8 +14,14 @@ function formatDateTime(dateStr: string) {
 }
 
 export function MedicamentosPage() {
-  const { data: medicines = [] } = useQuery({ queryKey: ['medicines'], queryFn: fetchMedicines, refetchInterval: 5000 })
-  const { data: appointments = [] } = useQuery({ queryKey: ['appointments'], queryFn: fetchAppointments, refetchInterval: 5000 })
+  const { data: medicines = [], isLoading: lm } = useQuery({ queryKey: ['medicines'], queryFn: fetchMedicines, refetchInterval: 5000 })
+  const { data: appointments = [], isLoading: la } = useQuery({ queryKey: ['appointments'], queryFn: fetchAppointments, refetchInterval: 5000 })
+  const { data: fallbackMessages = [], isLoading: lmsg } = useQuery({
+    queryKey: ['messages', 'medical'],
+    queryFn: () => fetchMessages('medical'),
+    refetchInterval: 5000,
+    enabled: !lm && !la && medicines.length === 0 && appointments.length === 0,
+  })
 
   const items = useMemo(() => {
     const list = [
@@ -47,11 +53,30 @@ export function MedicamentosPage() {
     [byDate]
   )
 
+  const showFallback = items.length === 0 && fallbackMessages.length > 0
+
   return (
     <div>
       <h1 className="text-2xl font-semibold text-foreground mb-6">Medicamentos</h1>
-      {items.length === 0 ? (
-        <p className="text-muted-foreground">Nenhum registro encontrado.</p>
+      {lm || la ? (
+        <p className="text-muted-foreground">Loading...</p>
+      ) : items.length === 0 && !showFallback ? (
+        lmsg ? (
+          <p className="text-muted-foreground">Loading...</p>
+        ) : (
+          <p className="text-muted-foreground">Nenhum registro encontrado.</p>
+        )
+      ) : showFallback ? (
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground mb-4">Mensagens com categoria medical (sem artefatos extraídos):</p>
+          {fallbackMessages.map((m) => (
+            <Card key={m.id}>
+              <CardContent className="py-4">
+                <p className="text-foreground">{m.content}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       ) : (
         <div className="space-y-6">
           {sortedDates.map((date) => (

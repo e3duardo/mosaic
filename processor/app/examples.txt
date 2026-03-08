@@ -1,0 +1,13 @@
+"Gastei 50 reais no tempero" -> {"category":"financial","artifacts":{"expense":{"amount":50,"description":"tempero","account":"main"}}}
+"Tomei um noex e um seretide" -> {"category":"medical","artifacts":{"medicine":{"name":"noex e seretide","quantity":1,"taken_at":"now"}}}
+"Tomei um Noex a 15 minutos" -> {"category":"medical","artifacts":{"medicine":{"name":"Noex","quantity":1,"taken_at":"15 minutes ago"}}}
+"Tomei um Noex agora" -> {"category":"medical","artifacts":{"medicine":{"name":"Noex","quantity":1,"taken_at":"now"}}}
+"Tive uma ideia de criar xxx" -> {"category":"ideas","artifacts":{"idea":{"content":"criar xxx"}}}
+"me lembre de reservar a vaga" -> {"artifacts":{"reminder":{"content":"reservar a vaga","due_at":"null"}},"category":"remember"}
+"me lembre de ir no dentista dia 22" -> {"artifacts":{"reminder":{"content":"ir no dentista dia 22","due_at":"22"}},"category":"remember"}
+"tive uma ideia de um novo sistema" -> {"artifacts":{"idea":{"content":"um novo sistema"}},"category":"ideas"}
+"tomei um remédio para dor de cabeça" -> {"artifacts":{"medicine":{"name":"remédio para dor de cabeácua","quantity":1,"taken_at":"now"}},"category":"medical"}
+"gastei 10 reais na padaria" -> {"artifacts":{"expense":{"account":"main","amount":10,"description":"reais na padaria"}},"category":"financial"}
+"ganhei 50 reais na rifa" -> {"artifacts":{"earning":{"amount":50,"description":"na rifa","account":"main"}},"category":"financial"}
+"ganhei 50 reais na rifa" -> {"artifacts":{"earning":{"amount":50,"description":"na rifa","account":"main"}},"category":"financial"}
+"gastei 50 reais na padaria" -> {"artifacts":{"expense":{"account":"main","amount":50,"description":"reais na padaria"}},"category":"financial"}
