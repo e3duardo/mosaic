@@ -1,0 +1,10 @@
+FROM node:20-alpine
+ENV PATH="/usr/local/bin:$PATH"
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Source is mounted at runtime
+EXPOSE 5173
+CMD ["node", "node_modules/vite/bin/vite.js", "--host", "0.0.0.0"]
