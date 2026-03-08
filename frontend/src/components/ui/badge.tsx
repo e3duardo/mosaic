@@ -3,12 +3,12 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const variantClasses: Record<string, string> = {
-  default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-  secondary: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
-  destructive: "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 [a]:hover:bg-destructive/20",
-  outline: "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
-  ghost: "hover:bg-muted hover:text-muted-foreground",
-  link: "text-primary underline-offset-4 hover:underline",
+  default: "bg-slate-800 text-white [a]:hover:bg-slate-700",
+  secondary: "bg-slate-100 text-slate-700 [a]:hover:bg-slate-200",
+  destructive: "bg-red-50 text-red-700 [a]:hover:bg-red-100",
+  outline: "border border-slate-200 bg-transparent text-slate-700 [a]:hover:bg-slate-50",
+  ghost: "bg-transparent hover:bg-slate-100 text-slate-600",
+  link: "bg-transparent text-slate-800 underline-offset-4 hover:underline",
 }
 
 const baseClasses =

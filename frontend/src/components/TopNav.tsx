@@ -1,8 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
-import { BarChart3, Sparkles } from 'lucide-react'
+import { BarChart3 } from 'lucide-react'
 import { MedicationsPopover } from '@/components/MedicationsPopover'
-import { useAI } from '@/contexts/AIContext'
-import { Switch } from '@/components/ui/switch'
 import logo from '@/assets/logo.svg'
 
 type TopNavProps = {
@@ -12,8 +10,6 @@ type TopNavProps = {
 export function TopNav({ variant = 'full' }: TopNavProps) {
   const location = useLocation()
   const isReports = location.pathname.startsWith('/reports')
-  const { useAI: useAIEnabled, setUseAI } = useAI()
-
   const isMinimal = variant === 'minimal'
 
   return (
@@ -46,10 +42,6 @@ export function TopNav({ variant = 'full' }: TopNavProps) {
       <div className={`flex items-center gap-2 ${isMinimal ? 'ml-auto' : ''}`}>
         {isMinimal && (
           <>
-            <label className="flex items-center gap-2 cursor-pointer" title={useAIEnabled ? 'IA ativada' : 'IA desativada'}>
-              <Sparkles size={18} className="text-slate-600 shrink-0" />
-              <Switch checked={useAIEnabled} onCheckedChange={setUseAI} />
-            </label>
             <Link
               to="/reports"
               className="flex items-center justify-center size-9 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"

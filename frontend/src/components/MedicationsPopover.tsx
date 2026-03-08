@@ -4,6 +4,7 @@ import { Pill } from 'lucide-react'
 import { fetchMedications, addMedication, deleteMedication } from '@/api/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import {
   Popover,
   PopoverContent,
@@ -45,7 +46,7 @@ export function MedicationsPopover({ iconOnly = false }: Props) {
           {!iconOnly && <span>Medicamentos ({medications.length})</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-72">
+      <PopoverContent align="end" className="w-72 bg-white">
         <p className="text-xs text-muted-foreground mb-2">
           Adicione medicamentos para melhorar a classificação.
         </p>
@@ -64,24 +65,21 @@ export function MedicationsPopover({ iconOnly = false }: Props) {
             Adicionar
           </Button>
         </div>
-        <ul className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
           {medications.map((m: { id: number; name: string }) => (
-            <li
-              key={m.id}
-              className="inline-flex items-center gap-1 px-2 py-1 bg-secondary rounded text-sm"
-            >
+            <Badge key={m.id} variant="secondary" className="gap-1 pr-1">
               {m.name}
               <button
                 type="button"
-                className="text-muted-foreground hover:text-destructive text-lg leading-none"
+                className="ml-0.5 text-muted-foreground hover:text-destructive leading-none p-0 border-0 bg-transparent cursor-pointer"
                 onClick={() => deleteMutation.mutate(m.id)}
                 aria-label="Remover"
               >
                 ×
               </button>
-            </li>
+            </Badge>
           ))}
-        </ul>
+        </div>
       </PopoverContent>
     </Popover>
   )
