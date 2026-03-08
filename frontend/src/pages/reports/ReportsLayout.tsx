@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { DollarSign, Pill, Lightbulb, Bell } from 'lucide-react'
-import { TopNav } from '../../components/TopNav'
+import { TopNav } from '@/components/TopNav'
+import { cn } from '@/lib/utils'
 
 const navItems = [
   { to: '/reports/financial', label: 'Financial', icon: DollarSign },
@@ -11,10 +12,10 @@ const navItems = [
 
 export function ReportsLayout() {
   return (
-    <div className="min-h-screen bg-slate-100 flex relative">
+    <div className="min-h-screen bg-muted/30 flex relative">
       <TopNav variant="full" />
-      <aside className="w-56 bg-white border-r border-slate-200 p-4 pt-16">
-        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">
+      <aside className="w-56 bg-card border-r border-border p-4 pt-16">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
           Relatórios
         </h2>
         <nav className="space-y-1">
@@ -23,9 +24,10 @@ export function ReportsLayout() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
-                  isActive ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-100'
-                }`
+                cn(
+                  'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors',
+                  isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'
+                )
               }
             >
               <Icon size={18} />

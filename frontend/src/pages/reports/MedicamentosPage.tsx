@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { fetchMedicines, fetchAppointments } from '../../api/client'
+import { fetchMedicines, fetchAppointments } from '@/api/client'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 function formatDateTime(dateStr: string) {
   try {
@@ -47,29 +49,36 @@ export function MedicamentosPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-slate-800 mb-6">Medicamentos</h1>
+      <h1 className="text-2xl font-semibold text-foreground mb-6">Medicamentos</h1>
       {items.length === 0 ? (
-        <p className="text-slate-500">Nenhum registro encontrado.</p>
+        <p className="text-muted-foreground">Nenhum registro encontrado.</p>
       ) : (
         <div className="space-y-6">
           {sortedDates.map((date) => (
-            <div key={date} className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-              <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 font-medium text-slate-700">{date}</div>
-              <ul className="divide-y divide-slate-100">
-                {(byDate.get(date) || []).map((item, i) => (
-                  <li key={i} className="px-4 py-3 flex items-start gap-3">
-                    <span className="text-sm text-slate-500 shrink-0">{item.time}</span>
-                    <div>
-                      <p className="font-medium text-slate-800">{item.label}</p>
-                      {item.detail && <p className="text-sm text-slate-500">{item.detail}</p>}
-                      <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded ${item.type === 'medicine' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'}`}>
-                        {item.type === 'medicine' ? 'Medicamento' : 'Consulta'}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <Card key={date}>
+              <div className="px-4 py-2 bg-muted/50 border-b border-border font-medium text-foreground">
+                {date}
+              </div>
+              <CardContent className="p-0">
+                <ul className="divide-y divide-border">
+                  {(byDate.get(date) || []).map((item, i) => (
+                    <li key={i} className="px-4 py-3 flex items-start gap-3">
+                      <span className="text-sm text-muted-foreground shrink-0">{item.time}</span>
+                      <div>
+                        <p className="font-medium text-foreground">{item.label}</p>
+                        {item.detail && <p className="text-sm text-muted-foreground">{item.detail}</p>}
+                        <Badge
+                          variant={item.type === 'medicine' ? 'default' : 'secondary'}
+                          className="mt-1"
+                        >
+                          {item.type === 'medicine' ? 'Medicamento' : 'Consulta'}
+                        </Badge>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}

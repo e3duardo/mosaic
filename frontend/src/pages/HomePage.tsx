@@ -1,25 +1,33 @@
-import { useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import logo from '../assets/logo.svg'
-import { TopNav } from '../components/TopNav'
-import { createMessage, fetchMessages, reclassifyMessage, type Message } from '../api/client'
+import { useRef, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import logo from '@/assets/logo.svg'
+import { TopNav } from '@/components/TopNav'
+import { createMessage, reclassifyMessage } from '@/api/client'
+import { useMessagesWebSocket, type Message } from '@/hooks/useMessagesWebSocket'
+import { useAI } from '@/contexts/AIContext'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const CATEGORIES = ['financial', 'medical', 'ideas', 'remember', 'message_only'] as const
 
 export function HomePage() {
   const [input, setInput] = useState('')
+  const formRef = useRef<HTMLFormElement>(null)
   const queryClient = useQueryClient()
-
-  const { data: messages = [], isLoading } = useQuery({
-    queryKey: ['messages'],
-    queryFn: fetchMessages,
-    refetchInterval: 2500,
-  })
+  const { messages, isLoading } = useMessagesWebSocket()
+  const { useAI: useAIEnabled } = useAI()
 
   const createMutation = useMutation({
-    mutationFn: createMessage,
+    mutationFn: (content: string) => createMessage(content, useAIEnabled),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] })
       queryClient.invalidateQueries({ queryKey: ['expenses'] })
       queryClient.invalidateQueries({ queryKey: ['earnings'] })
       queryClient.invalidateQueries({ queryKey: ['medicines'] })
@@ -33,7 +41,6 @@ export function HomePage() {
     mutationFn: ({ id, category }: { id: number; category: string }) =>
       reclassifyMessage(id, category),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] })
       queryClient.invalidateQueries({ queryKey: ['medications'] })
       queryClient.invalidateQueries({ queryKey: ['expenses'] })
       queryClient.invalidateQueries({ queryKey: ['earnings'] })
@@ -64,41 +71,40 @@ export function HomePage() {
         Mosaic
       </h1>
 
-      <form onSubmit={handleSubmit} className="w-full max-w-2xl">
-        <div className="flex gap-2">
-          <input
-            type="text"
+      <form ref={formRef} onSubmit={handleSubmit} className="w-full max-w-2xl">
+        <div className="flex gap-2 items-end">
+          <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Write anything... (e.g. Gastei 50 reais no tempero)"
-            className="flex-1 px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300"
+            className="flex-1 min-h-[44px] resize-none"
+            rows={2}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                formRef.current?.requestSubmit()
+              }
+            }}
           />
-          <button
-            type="submit"
-            disabled={!input.trim()}
-            className="px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 disabled:opacity-50"
-          >
+          <Button type="submit" disabled={!input.trim()} size="lg" className="bg-slate-800 hover:bg-slate-700 text-white shrink-0">
             Enter
-          </button>
+          </Button>
         </div>
-        <p className="mt-2 text-sm text-slate-500">Press Enter to submit</p>
+        <p className="mt-2 text-sm text-slate-500">Enter para enviar · Shift+Enter para nova linha</p>
       </form>
 
       {(createMutation.isError || reclassifyMutation.isError) && (
-        <p className="mt-4 text-red-600 text-sm">
+        <p className="mt-4 text-destructive text-sm">
           {(createMutation.error || reclassifyMutation.error)?.message}
         </p>
       )}
 
       {pendingMessages.length > 0 && (
         <div className="w-full max-w-2xl mt-8">
-          <h2 className="text-lg font-medium text-slate-700 mb-4">Processando</h2>
+          <h2 className="text-lg font-medium text-foreground mb-4">Processando</h2>
           <ul className="space-y-3">
             {pendingMessages.map((m) => (
-              <li
-                key={m.id}
-                className="p-3 bg-amber-50 rounded-lg border border-amber-100 shadow-sm flex items-center gap-2"
-              >
+              <li key={m.id} className="p-3 bg-amber-50 rounded-lg border border-amber-100 shadow-sm flex items-center gap-2">
                 <p className="text-slate-800 flex-1">{m.content}</p>
                 <span className="text-xs text-amber-600 animate-pulse">...</span>
               </li>
@@ -108,38 +114,39 @@ export function HomePage() {
       )}
 
       <div className="w-full max-w-2xl mt-12">
-        <h2 className="text-lg font-medium text-slate-700 mb-4">Recent</h2>
+        <h2 className="text-lg font-medium text-foreground mb-4">Recent</h2>
         {isLoading ? (
-          <p className="text-slate-500">Loading...</p>
+          <p className="text-muted-foreground">Loading...</p>
         ) : (
           <ul className="space-y-3">
             {processedMessages.map((m: Message) => (
               <li key={m.id} className="p-3 bg-white rounded-lg border border-slate-100 shadow-sm">
                 <p className="text-slate-800">{m.content}</p>
                 <div className="mt-2 flex items-center gap-2 flex-wrap">
-                  <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600">
-                    {m.category}
-                  </span>
-                  <select
-                    className="text-xs border border-slate-200 rounded px-2 py-1"
-                    value={m.category || ''}
-                    onChange={(e) => {
-                      const cat = e.target.value
-                      if (cat && cat !== m.category) {
-                        reclassifyMutation.mutate({ id: m.id, category: cat })
-                      }
-                    }}
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                  {reclassifyMutation.isPending && reclassifyMutation.variables?.id === m.id && (
-                    <span className="text-xs text-slate-400">...</span>
-                  )}
-                </div>
+                  <Badge variant="secondary">{m.category}</Badge>
+                    <Select
+                      value={m.category || ''}
+                      onValueChange={(cat) => {
+                        if (cat && cat !== m.category) {
+                          reclassifyMutation.mutate({ id: m.id, category: cat })
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="w-fit h-7 text-xs">
+                        <SelectValue placeholder="Categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CATEGORIES.map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {reclassifyMutation.isPending && reclassifyMutation.variables?.id === m.id && (
+                      <span className="text-xs text-slate-400">...</span>
+                    )}
+                  </div>
               </li>
             ))}
           </ul>

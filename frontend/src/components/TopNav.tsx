@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
-import { BarChart3 } from 'lucide-react'
-import { MedicationsPopover } from './MedicationsPopover'
-import logo from '../assets/logo.svg'
+import { BarChart3, Sparkles } from 'lucide-react'
+import { MedicationsPopover } from '@/components/MedicationsPopover'
+import { useAI } from '@/contexts/AIContext'
+import { Switch } from '@/components/ui/switch'
+import logo from '@/assets/logo.svg'
 
 type TopNavProps = {
   variant?: 'minimal' | 'full'
@@ -10,13 +12,14 @@ type TopNavProps = {
 export function TopNav({ variant = 'full' }: TopNavProps) {
   const location = useLocation()
   const isReports = location.pathname.startsWith('/reports')
+  const { useAI: useAIEnabled, setUseAI } = useAI()
 
   const isMinimal = variant === 'minimal'
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 h-14 flex items-center justify-between px-4 ${
-        isMinimal ? 'bg-transparent' : 'bg-white/95 backdrop-blur border-b border-slate-200'
+        isMinimal ? 'bg-transparent' : 'bg-background/95 backdrop-blur border-b border-border'
       }`}
     >
       <div className="flex items-center gap-6">
@@ -32,7 +35,7 @@ export function TopNav({ variant = 'full' }: TopNavProps) {
           <Link
             to="/reports"
             className={`hidden flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
-              isReports ? 'bg-slate-100 text-slate-800 font-medium' : 'text-slate-600 hover:bg-slate-50'
+              isReports ? 'bg-muted text-foreground font-medium' : 'text-muted-foreground hover:bg-muted'
             }`}
           >
             <BarChart3 size={18} />
@@ -40,12 +43,16 @@ export function TopNav({ variant = 'full' }: TopNavProps) {
           </Link>
         )}
       </div>
-      <div className={`flex items-center gap-1 ${isMinimal ? 'ml-auto' : ''}`}>
+      <div className={`flex items-center gap-2 ${isMinimal ? 'ml-auto' : ''}`}>
         {isMinimal && (
           <>
+            <label className="flex items-center gap-2 cursor-pointer" title={useAIEnabled ? 'IA ativada' : 'IA desativada'}>
+              <Sparkles size={18} className="text-slate-600 shrink-0" />
+              <Switch checked={useAIEnabled} onCheckedChange={setUseAI} />
+            </label>
             <Link
               to="/reports"
-              className="flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+              className="flex items-center justify-center size-9 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
               title="Relatórios"
             >
               <BarChart3 size={20} />

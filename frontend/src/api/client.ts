@@ -16,8 +16,11 @@ export type Message = {
   status?: 'pending' | 'processed'
 }
 
-export async function createMessage(content: string) {
-  return fetchApi<Message>('/api/messages', { method: 'POST', body: JSON.stringify({ content }) })
+export async function createMessage(content: string, useAI = true) {
+  return fetchApi<Message>('/api/messages', {
+    method: 'POST',
+    body: JSON.stringify({ content, use_ai: useAI }),
+  })
 }
 export async function fetchMessages() {
   return fetchApi<Message[]>('/api/messages')

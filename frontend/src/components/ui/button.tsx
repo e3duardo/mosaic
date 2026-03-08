@@ -1,0 +1,51 @@
+import { Button as ButtonPrimitive } from "@base-ui/react/button"
+
+import { cn } from "@/lib/utils"
+
+const variantClasses: Record<string, string> = {
+  default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+  outline: "border-border bg-background hover:bg-muted hover:text-foreground",
+  secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+  ghost: "hover:bg-muted hover:text-foreground",
+  destructive: "bg-destructive/10 text-destructive hover:bg-destructive/20",
+  link: "text-primary underline-offset-4 hover:underline",
+}
+
+const sizeClasses: Record<string, string> = {
+  default: "h-8 gap-1.5 px-2.5",
+  xs: "h-6 gap-1 px-2 text-xs [&_svg]:size-3",
+  sm: "h-7 gap-1 px-2.5 text-[0.8rem] [&_svg]:size-3.5",
+  lg: "h-9 gap-1.5 px-2.5 [&_svg]:size-4",
+  icon: "size-8 [&_svg]:size-4",
+  "icon-xs": "size-6 [&_svg]:size-3",
+  "icon-sm": "size-7 [&_svg]:size-3.5",
+  "icon-lg": "size-9 [&_svg]:size-4",
+}
+
+const baseClasses =
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0"
+
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  ...props
+}: ButtonPrimitive.Props & {
+  variant?: keyof typeof variantClasses
+  size?: keyof typeof sizeClasses
+}) {
+  return (
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(
+        baseClasses,
+        variantClasses[variant] ?? variantClasses.default,
+        sizeClasses[size] ?? sizeClasses.default,
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Button }

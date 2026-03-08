@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { AIProvider } from './contexts/AIContext'
 import { HomePage } from './pages/HomePage'
 import { ReportsLayout } from './pages/reports/ReportsLayout'
 import { FinancialPage } from './pages/reports/FinancialPage'
@@ -9,7 +10,7 @@ import { RememberPage } from './pages/reports/RememberPage'
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<AIProvider><HomePage /></AIProvider>} />
       <Route path="/reports" element={<ReportsLayout />}>
         <Route index element={<Navigate to="/reports/financial" replace />} />
         <Route path="financial" element={<FinancialPage />} />
