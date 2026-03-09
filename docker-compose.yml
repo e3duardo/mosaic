@@ -10,6 +10,8 @@ services:
       PROCESSOR_URL: http://processor:8000
       FRONTEND_URL: http://localhost:5173
       EXAMPLES_FILE: /processor/app/examples.txt
+      CATEGORIES_FILE: /processor/app/categories.txt
+      ACCOUNTS_FILE: /processor/app/accounts.txt
     depends_on:
       postgres:
         condition: service_healthy

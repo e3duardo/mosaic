@@ -11,3 +11,5 @@
 "ganhei 50 reais na rifa" -> {"artifacts":{"earning":{"amount":50,"description":"na rifa","account":"main"}},"category":"financial"}
 "ganhei 50 reais na rifa" -> {"artifacts":{"earning":{"amount":50,"description":"na rifa","account":"main"}},"category":"financial"}
 "gastei 50 reais na padaria" -> {"artifacts":{"expense":{"account":"main","amount":50,"description":"reais na padaria"}},"category":"financial"}
+"Comprei um brinquedo para o gael agora, custou 30 reais" -> {"artifacts":{"expense":{"account":"main","amount":30,"description":"reais"}},"category":"financial"}
+"Comprei um brinquedo para o gael agora, custou 23 reais" -> {"artifacts":{"expense":{"account":"main","amount":23,"description":"reais"}},"category":"financial"}

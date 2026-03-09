@@ -21,6 +21,7 @@ type Expense struct {
 	Amount      float64   `json:"amount"`
 	Description string    `json:"description"`
 	Account     string    `json:"account"`
+	Subcategory string    `json:"subcategory"`
 	Date        time.Time `json:"date"`
 	MessageID   uint      `json:"message_id"`
 	CreatedAt   time.Time `json:"created_at"`
@@ -31,9 +32,24 @@ type Earning struct {
 	Amount      float64   `json:"amount"`
 	Description string    `json:"description"`
 	Account     string    `json:"account"`
+	Subcategory string    `json:"subcategory"`
 	Date        time.Time `json:"date"`
 	MessageID   uint      `json:"message_id"`
 	CreatedAt   time.Time `json:"created_at"`
+}
+
+// FinancialCategory is a subcategory for expenses (e.g. alimentação, transporte).
+type FinancialCategory struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Name      string    `gorm:"uniqueIndex" json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// Account is a bank account name used for expenses and earnings.
+type Account struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Name      string    `gorm:"uniqueIndex" json:"name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Medicine struct {

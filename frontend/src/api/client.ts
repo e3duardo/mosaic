@@ -71,3 +71,45 @@ export async function fetchIdeas() {
 export async function fetchReminders() {
   return fetchApi<{ id: number; content: string; due_at: string }[]>('/api/remember')
 }
+
+export type FinancialCategory = { id: number; name: string }
+export async function fetchFinancialCategories() {
+  return fetchApi<FinancialCategory[]>('/api/financial/categories')
+}
+export async function createFinancialCategory(name: string) {
+  return fetchApi<FinancialCategory>('/api/financial/categories', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  })
+}
+export async function updateFinancialCategory(id: number, name: string) {
+  return fetchApi<FinancialCategory>(`/api/financial/categories/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ name }),
+  })
+}
+export async function deleteFinancialCategory(id: number) {
+  const res = await fetch(`${API_URL}/api/financial/categories/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error(await res.text())
+}
+
+export type Account = { id: number; name: string }
+export async function fetchAccounts() {
+  return fetchApi<Account[]>('/api/financial/accounts')
+}
+export async function createAccount(name: string) {
+  return fetchApi<Account>('/api/financial/accounts', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  })
+}
+export async function updateAccount(id: number, name: string) {
+  return fetchApi<Account>(`/api/financial/accounts/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ name }),
+  })
+}
+export async function deleteAccount(id: number) {
+  const res = await fetch(`${API_URL}/api/financial/accounts/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error(await res.text())
+}

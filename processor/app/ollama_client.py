@@ -1,10 +1,21 @@
 import json
 import os
+import re
 
 from ollama import Client
 
 from app.prompts import build_system_prompt
 from app.schemas import ProcessResponse
+
+
+def _extract_json(content: str) -> str:
+    """Extract JSON from content, handling markdown code blocks."""
+    content = content.strip()
+    # Match ```json ... ``` or ``` ... ```
+    m = re.search(r"```(?:json)?\s*\n?(.*?)\n?```", content, re.DOTALL)
+    if m:
+        return m.group(1).strip()
+    return content
 
 
 def process(
@@ -31,9 +42,25 @@ def process(
 
     content = response.message.content
     try:
-        data = json.loads(content)
+        data = json.loads(_extract_json(content))
         category = data.get("category", "message_only")
-        artifacts = data.get("artifacts", {})
+        artifacts = data.get("artifacts") or {}
+
+        # Normalize: LLM may return expense/earning at top level instead of inside artifacts
+        if category == "financial" and isinstance(artifacts, dict) and not artifacts:
+            if "expense" in data:
+                artifacts = {"expense": data["expense"]}
+            elif "earning" in data:
+                artifacts = {"earning": data["earning"]}
+
+        # Normalize: LLM may return artifacts as array [{"expense": {...}}]
+        if isinstance(artifacts, list) and artifacts:
+            first = artifacts[0]
+            if isinstance(first, dict) and ("expense" in first or "earning" in first):
+                artifacts = first
+
+        if not isinstance(artifacts, dict):
+            artifacts = {}
 
         # User confirmed category (reclassification)
         if category_hint:

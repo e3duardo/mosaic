@@ -21,6 +21,8 @@ func main() {
 		processorURL = "http://localhost:8000"
 	}
 	examplesFile := os.Getenv("EXAMPLES_FILE")
+	categoriesFile := os.Getenv("CATEGORIES_FILE")
+	accountsFile := os.Getenv("ACCOUNTS_FILE")
 
 	db, err := database.Open(dbURL)
 	if err != nil {
@@ -36,6 +38,8 @@ func main() {
 		&models.Idea{},
 		&models.Medication{},
 		&models.Reminder{},
+		&models.FinancialCategory{},
+		&models.Account{},
 	); err != nil {
 		log.Fatal(err)
 	}
@@ -43,7 +47,8 @@ func main() {
 	hub := api.NewHub()
 	go hub.Run()
 
-	h := api.NewHandler(db, processorURL, hub, examplesFile)
+	h := api.NewHandler(db, processorURL, hub, examplesFile, categoriesFile, accountsFile)
+	h.SyncFinancialFiles()
 
 	r := gin.Default()
 	r.Use(cors.Default())

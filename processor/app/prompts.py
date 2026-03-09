@@ -18,6 +18,28 @@ def _load_examples() -> str:
         return DEFAULT_EXAMPLES
 
 
+def _load_categories() -> list[str]:
+    base = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(base, "categories.txt")
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = [line.strip() for line in f if line.strip()]
+            return lines
+    except OSError:
+        return []
+
+
+def _load_accounts() -> list[str]:
+    base = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(base, "accounts.txt")
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = [line.strip() for line in f if line.strip()]
+            return lines
+    except OSError:
+        return []
+
+
 def build_system_prompt(
     known_medications: list[str] | None = None,
     category_hint: str = "",
@@ -29,9 +51,17 @@ def build_system_prompt(
     if category_hint:
         cat_hint = f"\n\nIMPORTANT: The user confirmed this message is category '{category_hint}'. Use that category and extract the appropriate artifacts."
     examples = _load_examples()
+    categories = _load_categories()
+    accounts = _load_accounts()
+    subcat_hint = ""
+    if categories:
+        subcat_hint = f"\n\nKnown expense subcategories (use one of these when extracting expense): {', '.join(categories)}"
+    acc_hint = ""
+    if accounts:
+        acc_hint = f"\n\nKnown accounts (use one of these for the account field in expense/earning): {', '.join(accounts)}"
     return f"""You are a categorizer for a personal assistant. The user writes messages in natural language (Portuguese or English).
 
-For each message, determine the category and extract structured artifacts.{med_hint}{cat_hint}
+For each message, determine the category and extract structured artifacts.{med_hint}{cat_hint}{subcat_hint}{acc_hint}
 
 Categories:
 - financial: expenses (gastos, despesas) or earnings (ganhos, receitas)
@@ -42,7 +72,7 @@ Categories:
 
 Return valid JSON with:
 - category: one of the above
-- artifacts: object or array with extracted data. For financial use {{expense: {{amount, description, account}}}} or {{earning: {{...}}}}. For medical use {{medicine: {{name, quantity, taken_at}}}} or {{appointment: {{...}}}}. For ideas use {{idea: {{content}}}}. For remember use {{reminder: {{content, due_at}}}}.
+- artifacts: object or array with extracted data. For financial use {{expense: {{amount, description, account, subcategory}}}} or {{earning: {{amount, description, account, subcategory}}}}. For medical use {{medicine: {{name, quantity, taken_at}}}} or {{appointment: {{...}}}}. For ideas use {{idea: {{content}}}}. For remember use {{reminder: {{content, due_at}}}}.
 
 Examples:
 {examples}

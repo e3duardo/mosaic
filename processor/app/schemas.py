@@ -8,6 +8,7 @@ class ExpenseArtifact(BaseModel):
     amount: float
     description: str
     account: str = "main"
+    subcategory: str | None = None
     date: str | None = None
 
 
@@ -15,6 +16,7 @@ class EarningArtifact(BaseModel):
     amount: float
     description: str
     account: str = "main"
+    subcategory: str | None = None
     date: str | None = None
 
 
