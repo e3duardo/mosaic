@@ -1,9 +1,13 @@
 from fastapi import APIRouter, HTTPException
 
 from app.ollama_client import process
-from app.schemas import ProcessResponse
+from app.schemas import HealthCheck, ProcessResponse
 
 router = APIRouter()
+
+@router.get("/health", response_model=HealthCheck)
+def health_check():
+    return {"status": "ok", "service": "processor"}
 
 
 @router.post("/process", response_model=ProcessResponse)

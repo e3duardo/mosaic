@@ -46,3 +46,8 @@ Category = Literal["financial", "medical", "ideas", "remember", "message_only"]
 class ProcessResponse(BaseModel):
     category: Category
     artifacts: dict[str, Any] | list[Any] = Field(default_factory=dict)
+
+
+class HealthCheck(BaseModel):
+    status: str
+    service: str
