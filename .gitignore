@@ -14,3 +14,6 @@
 .env
 .env.local
 .env.*.local
+
+# AI tooling — local overrides
+.agents/settings.local.json
